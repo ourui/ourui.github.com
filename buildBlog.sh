@@ -13,12 +13,12 @@ git commit -m "update at `date` "
 # git push origin master -f
 # echo "### Done"
 
-git remote add gitcafe git@gitcafe.com:walreal/walreal.git >> /dev/null 2>&1
+git remote add gitcafe_ourui git@gitcafe.com:ourui/ourui.git >> /dev/null 2>&1
 echo "### Pushing Pages to GitCafe..."
-git push gitcafe master:gitcafe-pages -f
+git push gitcafe_ourui master:gitcafe-pages -f
 cd ..
 echo "### Backup Source to GitCafe..."
-git push gitcafe master:source 
+git push gitcafe_ourui master:source 
 
 
 echo "### Done"
