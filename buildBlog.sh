@@ -21,10 +21,10 @@ echo "### Done"
 
 cd ..
 echo "### Backup Source to Coding..."
-git push coding master:source 
+git push coding master:source -f
 
 echo "### Backup Source to Github..."
-git push origin master:source
+git push origin master:source -f
 
 echo "### Done"
 
