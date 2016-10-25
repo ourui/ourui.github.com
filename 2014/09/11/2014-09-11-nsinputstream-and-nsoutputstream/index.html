@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>NSInputStream 和 NSOutputStream | Wang Rui&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对于 NSInputStream 和 NSOutputStream 一直没怎么搞清楚，今天抽一些时间在此记录一下！
+NSInputStream 与 NSOutputStream 都继承于 NSStream, NSStream 是一个抽象的基类, 规定了Stream共有的一些行为…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSInputStream 和 NSOutputStream">
+<meta property="og:url" content="http://yoursite.com/2014/09/11/2014-09-11-nsinputstream-and-nsoutputstream/index.html">
+<meta property="og:site_name" content="Wang Rui's Blog">
+<meta property="og:description" content="对于 NSInputStream 和 NSOutputStream 一直没怎么搞清楚，今天抽一些时间在此记录一下！
+NSInputStream 与 NSOutputStream 都继承于 NSStream, NSStream 是一个抽象的基类, 规定了Stream共有的一些行为…">
+<meta property="og:updated_time" content="2016-02-23T14:39:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NSInputStream 和 NSOutputStream">
+<meta name="twitter:description" content="对于 NSInputStream 和 NSOutputStream 一直没怎么搞清楚，今天抽一些时间在此记录一下！
+NSInputStream 与 NSOutputStream 都继承于 NSStream, NSStream 是一个抽象的基类, 规定了Stream共有的一些行为…">
+  
+    <link rel="alternative" href="/atom.xml" title="Wang Rui&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wang Rui&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">A great ship asks deep water.</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2014-09-11-nsinputstream-and-nsoutputstream" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/11/2014-09-11-nsinputstream-and-nsoutputstream/" class="article-date">
+  <time datetime="2014-09-11T13:03:56.000Z" itemprop="datePublished">2014-09-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      NSInputStream 和 NSOutputStream
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>对于 NSInputStream 和 NSOutputStream 一直没怎么搞清楚，今天抽一些时间在此记录一下！</p>
+<p>NSInputStream 与 NSOutputStream 都继承于 NSStream, NSStream 是一个抽象的基类, 规定了Stream共有的一些行为…</p>
+<a id="more"></a>
+<p>###什么是Stream</p>
+<p>Stream翻译成为流，它是对我们读写文件的一个抽象。 你可以这样想象，当你读文件和写文件的时候，文件的内容就像水流一样哗哗的<br>像你流过来或者流给别人，这样岂不是很爽。 而Stream就帮我们做了这样的事情， 实际上，它是把文件的内容，一小段一小段的读出或<br>写入，来到达这样的效果</p>
+<p>###NSStream</p>
+<p>NSStream 是Cocoa平台下对流这个概念的实现类， NSInputStream 和 NSOutputStream 则是它的两个子类，分别对应了读文件和<br>写文件。</p>
+<p>###NSInputStream</p>
+<p>NSInputStream 对应的是读文件，所以要记住它是要将文件的内容读到内存(你声明的一段buffer)里, 下面一段是测试代码</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)doTestInputStream &#123;</span><br><span class="line">	<span class="built_in">NSString</span> *path = <span class="string">@"/Users/usr/Desktop/stream.txt"</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">NSInputStream</span> *readStream = [[<span class="built_in">NSInputStream</span> alloc]initWithFileAtPath:path];</span><br><span class="line">	[readStream setDelegate:<span class="keyword">self</span>];</span><br><span class="line">	</span><br><span class="line">	[readStream scheduleInRunLoop:[<span class="built_in">NSRunLoop</span> currentRunLoop] forMode:<span class="built_in">NSRunLoopCommonModes</span>];</span><br><span class="line">	[readStream open]; <span class="comment">//调用open开始读文件</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)stream:(<span class="built_in">NSStream</span> *)aStream handleEvent:(<span class="built_in">NSStreamEvent</span>)eventCode &#123;</span><br><span class="line">	<span class="keyword">switch</span> (eventCode) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventHasBytesAvailable</span>:&#123;</span><br><span class="line">			</span><br><span class="line">			uint8_t buf[<span class="number">1024</span>];</span><br><span class="line">			</span><br><span class="line">			<span class="built_in">NSInputStream</span> *reads = (<span class="built_in">NSInputStream</span> *)aStream;</span><br><span class="line">			<span class="built_in">NSInteger</span> blength = [reads read:buf maxLength:<span class="keyword">sizeof</span>(buf)]; <span class="comment">//把流的数据放入buffer</span></span><br><span class="line">			<span class="built_in">NSData</span> *data = [<span class="built_in">NSData</span> dataWithBytes:(<span class="keyword">void</span> *)buf length:blength];</span><br><span class="line">			</span><br><span class="line">			<span class="built_in">NSString</span> *string = [[<span class="built_in">NSString</span> alloc]initWithData:data encoding:<span class="built_in">NSUTF8StringEncoding</span>];</span><br><span class="line">			<span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,string);</span><br><span class="line">		&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">					</span><br><span class="line"></span><br><span class="line">		<span class="comment">//错误和无事件处理</span></span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventErrorOccurred</span>:&#123;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventNone</span>:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//打开完成</span></span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventOpenCompleted</span>: &#123;</span><br><span class="line">			<span class="built_in">NSLog</span>(<span class="string">@"NSStreamEventOpenCompleted"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">			</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>###NSOutputStream</p>
+<p>NSOutputStream 对应的是写文件，它是要将已存在的内存(buffer)里的数据写入文件, 下面同样一段是测试代码</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- (<span class="built_in">NSData</span> *)dataWillWrite &#123;</span><br><span class="line">	<span class="keyword">static</span>  <span class="built_in">NSData</span> *data = <span class="literal">nil</span>;</span><br><span class="line">	<span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">	<span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">		data = [<span class="built_in">NSData</span> dataWithContentsOfFile:<span class="string">@"/Users/usr/Desktop/stream.txt"</span>];</span><br><span class="line">	&#125;);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)doTestOutputStream &#123;</span><br><span class="line">	<span class="built_in">NSString</span> *path = <span class="string">@"/Users/usr/Desktop/stream-write.txt"</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">NSOutputStream</span> *writeStream = [[<span class="built_in">NSOutputStream</span> alloc] initToFileAtPath:path append:<span class="literal">YES</span>];</span><br><span class="line">	[writeStream setDelegate:<span class="keyword">self</span>];</span><br><span class="line">	</span><br><span class="line">	[writeStream scheduleInRunLoop:[<span class="built_in">NSRunLoop</span> currentRunLoop] forMode:<span class="built_in">NSRunLoopCommonModes</span>];</span><br><span class="line">	[writeStream open];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)stream:(<span class="built_in">NSStream</span> *)aStream handleEvent:(<span class="built_in">NSStreamEvent</span>)eventCode &#123;</span><br><span class="line">	<span class="keyword">switch</span> (eventCode) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventHasSpaceAvailable</span>: &#123;</span><br><span class="line">			</span><br><span class="line">			<span class="built_in">NSInteger</span> bufSize = <span class="number">5</span>;</span><br><span class="line">			uint8_t buf[bufSize];</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.location</span> + bufSize &gt; [<span class="keyword">self</span> dataWillWrite]<span class="variable">.length</span>) &#123;</span><br><span class="line">				[[<span class="keyword">self</span> dataWillWrite] getBytes:buf</span><br><span class="line">										 range:<span class="built_in">NSMakeRange</span>(<span class="keyword">self</span><span class="variable">.location</span>, <span class="keyword">self</span><span class="variable">.location</span> + bufSize - [<span class="keyword">self</span> dataWillWrite]<span class="variable">.length</span>)];</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				[[<span class="keyword">self</span> dataWillWrite] getBytes:buf range:<span class="built_in">NSMakeRange</span>(<span class="keyword">self</span><span class="variable">.location</span>, bufSize)];</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			<span class="built_in">NSOutputStream</span> *writeStream = (<span class="built_in">NSOutputStream</span> *)aStream;</span><br><span class="line">			[writeStream write:buf maxLength:<span class="keyword">sizeof</span>(buf)]; <span class="comment">//把buffer里的数据，写入文件</span></span><br><span class="line">			</span><br><span class="line">			<span class="keyword">self</span><span class="variable">.location</span> += bufSize;</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.location</span> &gt;= [[<span class="keyword">self</span> dataWillWrite] length] ) &#123; <span class="comment">//写完后关闭流</span></span><br><span class="line">				[aStream close];</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">			</span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventEndEncountered</span>: &#123;</span><br><span class="line">			[aStream close];</span><br><span class="line">		&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//错误和无事件处理</span></span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventErrorOccurred</span>:&#123;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventNone</span>:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//打开完成</span></span><br><span class="line">		<span class="keyword">case</span> <span class="built_in">NSStreamEventOpenCompleted</span>: &#123;</span><br><span class="line">			<span class="built_in">NSLog</span>(<span class="string">@"NSStreamEventOpenCompleted"</span>);</span><br><span class="line">			</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">			</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h3><p>NSInputStream 和 NSOutputStream 常用与网络传输中，比如要将一个很大的文件传送给服务器，那么NSInputStream这时候是<br>很好的选择, 我们可以查看到 NSURLRequest 有一个属性叫HTTPBodyStream， 这时只要设置好一个NSInputStream的实例就可以<br>了，最大的好处就是可以节省我们很多的内存。</p>
+<p>另外要说明的是，NSInputStream 和 NSOutputStream其实是对 CoreFoundation 层对应的CFReadStreamRef 和 CFWriteStreamRef<br>的高层抽象。在使用CFNetwork时，常常会使用到CFReadStreamRef 与 CFWriteStreamRef。 下面是一段相关代码</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// Keep a reference to self to use for controller callbacks</span></span><br><span class="line">   <span class="comment">//</span></span><br><span class="line"><span class="built_in">CFStreamClientContext</span> ctx = &#123;<span class="number">0</span>, (__bridge <span class="keyword">void</span> *)(<span class="keyword">self</span>), <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get callbacks for stream data, stream end, and any errors</span></span><br><span class="line">   <span class="comment">//</span></span><br><span class="line"><span class="built_in">CFOptionFlags</span> registeredEvents = (k<span class="built_in">CFStreamEventHasBytesAvailable</span> | k<span class="built_in">CFStreamEventEndEncountered</span> | k<span class="built_in">CFStreamEventErrorOccurred</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Create a read-only socket</span></span><br><span class="line">   <span class="comment">//</span></span><br><span class="line"><span class="built_in">CFReadStreamRef</span> readStream;</span><br><span class="line"><span class="built_in">CFStreamCreatePairWithSocketToHost</span>(k<span class="built_in">CFAllocatorDefault</span>, (__bridge <span class="built_in">CFStringRef</span>)host, (<span class="built_in">UInt32</span>)port, &amp;readStream, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Schedule the stream on the run loop to enable callbacks</span></span><br><span class="line">   <span class="comment">//</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">CFReadStreamSetClient</span>(readStream, registeredEvents, socketCallback, &amp;ctx)) &#123;</span><br><span class="line">	<span class="built_in">CFReadStreamScheduleWithRunLoop</span>(readStream, <span class="built_in">CFRunLoopGetCurrent</span>(), k<span class="built_in">CFRunLoopCommonModes</span>);</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line">   <span class="keyword">else</span> &#123;</span><br><span class="line">       [<span class="keyword">self</span> networkFailedWithErrorMessage:<span class="string">@"Failed to assign callback method"</span>];</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Open the stream for reading</span></span><br><span class="line">   <span class="comment">//</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">CFReadStreamOpen</span>(readStream) == <span class="literal">NO</span>) &#123;</span><br><span class="line">       [<span class="keyword">self</span> networkFailedWithErrorMessage:<span class="string">@"Failed to open read stream"</span>];</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">CFErrorRef</span> error = <span class="built_in">CFReadStreamCopyError</span>(readStream);</span><br><span class="line"><span class="keyword">if</span> (error != <span class="literal">NULL</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">CFErrorGetCode</span>(error) != <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">NSString</span> * errorInfo = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"Failed to connect stream; error '%@' (code %ld)"</span>, (__bridge <span class="built_in">NSString</span>*)<span class="built_in">CFErrorGetDomain</span>(error), <span class="built_in">CFErrorGetCode</span>(error)];</span><br><span class="line">           [<span class="keyword">self</span> networkFailedWithErrorMessage:errorInfo];</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">CFRelease</span>(error);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2014/09/11/2014-09-11-nsinputstream-and-nsoutputstream/" data-id="ciuowwaof000cegw04ju0a11b" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/09/12/2014-09-12-clang-compile-arm-file/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Mac上用 clang 简单交叉编译arm架构的文件
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/01/22/2014-01-22-mantle-use/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Mantle 初步使用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+  
+  <section id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-2014-09-11-nsinputstream-and-nsoutputstream" data-title="NSInputStream 和 NSOutputStream" data-url="http://yoursite.com/2014/09/11/2014-09-11-nsinputstream-and-nsoutputstream/"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'wangrui'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+  </section>
+  </section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/briding/">briding</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/language/">language</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/octopress/">octopress</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/briding/" style="font-size: 10px;">briding</a> <a href="/tags/language/" style="font-size: 10px;">language</a> <a href="/tags/octopress/" style="font-size: 20px;">octopress</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/03/08/2015-03-08-toll-free-bridging/">Toll Free Bridging 的秘密</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/12/2014-09-12-clang-compile-arm-file/">Mac上用 clang 简单交叉编译arm架构的文件</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/11/2014-09-11-nsinputstream-and-nsoutputstream/">NSInputStream 和 NSOutputStream</a>
+          </li>
+        
+          <li>
+            <a href="/2014/01/22/2014-01-22-mantle-use/">Mantle 初步使用</a>
+          </li>
+        
+          <li>
+            <a href="/2014/01/13/2014-01-13-id-vs-instance/">id vs instancetype</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Wang Rui<br>
+      <span id="busuanzi_container_site_pv">
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+</span>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  </div>
+</body>
+</html>
